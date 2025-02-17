@@ -1,64 +1,68 @@
 import cv2
-import numpy as np
 import sys
-from pano_window import ImageWindow
 
-class ImageStitcher:
-    def __init__(self, *images):
-        self.images = [cv2.imread(f"./assets/{img}.jpeg") for img in images]
-        self.sift = cv2.SIFT_create()  # SIFT keypoint detector
-        self.matcher = cv2.BFMatcher(cv2.NORM_L2, crossCheck=True)
+def detect_and_draw_keypoints(image):
+    # Use ORB (Oriented FAST and Rotated BRIEF) detector
+    orb = cv2.ORB_create()
+    keypoints, descriptors = orb.detectAndCompute(image, None)
+    
+    # Draw the keypoints on the image
+    image_with_keypoints = cv2.drawKeypoints(image, keypoints, None, color=(0, 255, 0), flags=cv2.DrawMatchesFlags_DRAW_RICH_KEYPOINTS)
+    
+    return image_with_keypoints, keypoints
 
-    def detect_keypoints(self):
-        keypoints = []
-        descriptors = []
-        for img in self.images:
-            kp, des = self.sift.detectAndCompute(img, None)
-            keypoints.append(kp)
-            descriptors.append(des)
-        return keypoints, descriptors
-
-    def match_keypoints(self, descriptors):
-        matches = []
-        for i in range(len(descriptors) - 1):
-            match = self.matcher.match(descriptors[i], descriptors[i+1])
-            matches.append(match)
-        return matches
-
-    def stitch_images(self, keypoints, descriptors, matches):
-        img1, img2 = self.images[0], self.images[1]
-        kp1, kp2 = keypoints[0], keypoints[1]
-        des1, des2 = descriptors[0], descriptors[1]
+def stitch_images(image_paths):
+    # Load the first image and detect keypoints
+    img1 = cv2.imread(image_paths[0])
+    img1_with_keypoints, keypoints1 = detect_and_draw_keypoints(img1)
+    
+    # Display the first image and its keypoints
+    cv2.imshow("Image 1 with Keypoints", img1_with_keypoints)
+    
+    # Loop through the remaining images and stitch them iteratively
+    for image_path in image_paths[1:]:
+        img2 = cv2.imread(image_path)
+        img2_with_keypoints, keypoints2 = detect_and_draw_keypoints(img2)
         
-        # Get the matched points
-        pts1 = np.float32([kp1[m.queryIdx].pt for m in matches[0]]).reshape(-1, 1, 2)
-        pts2 = np.float32([kp2[m.trainIdx].pt for m in matches[0]]).reshape(-1, 1, 2)
+        # Display the second image and its keypoints
+        cv2.imshow(f"Image {image_path} with Keypoints", img2_with_keypoints)
         
-        # Find homography matrix
-        M, _ = cv2.findHomography(pts2, pts1, cv2.RANSAC)
+        # Stitch the two images together
+        stitcher = cv2.Stitcher_create()
+        status, stitched_image = stitcher.stitch([img1, img2])
         
-        # Stitch images
-        result = cv2.warpPerspective(img2, M, (img1.shape[1] + img2.shape[1], img1.shape[0]))
-        result[0:img1.shape[0], 0:img1.shape[1]] = img1
-        return result
+        if status == cv2.Stitcher_OK:
+            img1 = stitched_image  # Update img1 to the stitched result
+        else:
+            print(f"Error stitching {image_path}")
+            break
+    
+    return img1
 
 def main():
-    if len(sys.argv) < 3:
-        print("Please provide image names like 'img1' 'img2'.")
-        sys.exit(1)
-
-    images = sys.argv[1:]
-    stitcher = ImageStitcher(*images)
-    keypoints, descriptors = stitcher.detect_keypoints()
-    matches = stitcher.match_keypoints(descriptors)
-    panorama = stitcher.stitch_images(keypoints, descriptors, matches)
-
-    # Save the panorama
-    cv2.imwrite('./output/panorama.jpeg', panorama)
-    print("Panorama saved as 'panorama.jpeg'.")
-
-    # Display images and panorama in the window
-    window = ImageWindow([cv2.imread(f"./assets/{img}.jpeg") for img in images], keypoints, panorama)
+    # Get image names from command line arguments
+    if len(sys.argv) < 2:
+        print("Please provide image names as arguments.")
+        return
+    
+    image_paths = [f"./assets/{name}.jpeg" for name in sys.argv[1:]]
+    
+    # Stitch images and get the panorama
+    panorama = stitch_images(image_paths)
+    
+    # Display the final panorama
+    cv2.imshow("Panorama", panorama)
+    
+    # Save the final panorama image
+    cv2.imwrite('./assets/panorama.jpeg', panorama)
+    print("Panorama saved as './assets/panorama.jpeg'")
+    
+    # Wait until 'x' is pressed to close the windows
+    while True:
+        if cv2.waitKey(1) & 0xFF == ord('x'):
+            break
+    
+    cv2.destroyAllWindows()
 
 if __name__ == "__main__":
     main()

@@ -1,0 +1,48 @@
+2025-02-17 10:12:43,490 - INFO - Detecting keypoints and computing descriptors...
+2025-02-17 10:12:43,756 - INFO - Detected 2753 keypoints
+2025-02-17 10:12:43,966 - INFO - Detected 3339 keypoints
+2025-02-17 10:12:44,177 - INFO - Detected 3330 keypoints
+2025-02-17 10:12:44,384 - INFO - Detected 3106 keypoints
+2025-02-17 10:12:44,384 - INFO - Matching keypoints between images...
+2025-02-17 10:12:44,443 - INFO - Found 196 good matches between images 0 and 1
+2025-02-17 10:12:44,507 - INFO - Found 266 good matches between images 1 and 2
+2025-02-17 10:12:44,570 - INFO - Found 229 good matches between images 2 and 3
+2025-02-17 10:12:44,570 - INFO - Stitching images...
+2025-02-17 10:12:44,626 - ERROR - Error during image stitching: boolean index did not match indexed array along axis 1; size of axis is 2400 but size of corresponding boolean axis is 1200
+2025-02-17 10:12:44,629 - ERROR - Failed to create panorama: Error during image stitching: boolean index did not match indexed array along axis 1; size of axis is 2400 but size of corresponding boolean axis is 1200
+2025-02-17 10:16:21,028 - INFO - Detecting keypoints and computing descriptors...
+2025-02-17 10:16:21,266 - INFO - Detected 2753 keypoints
+2025-02-17 10:16:21,477 - INFO - Detected 3339 keypoints
+2025-02-17 10:16:21,690 - INFO - Detected 3330 keypoints
+2025-02-17 10:16:21,900 - INFO - Detected 3106 keypoints
+2025-02-17 10:16:21,901 - INFO - Matching keypoints between images...
+2025-02-17 10:16:21,960 - INFO - Found 196 good matches between images 0 and 1
+2025-02-17 10:16:22,024 - INFO - Found 266 good matches between images 1 and 2
+2025-02-17 10:16:22,087 - INFO - Found 229 good matches between images 2 and 3
+2025-02-17 10:16:22,087 - INFO - Stitching images...
+2025-02-17 10:16:22,145 - ERROR - Error during image stitching: boolean index did not match indexed array along axis 1; size of axis is 2400 but size of corresponding boolean axis is 1200
+2025-02-17 10:16:22,146 - ERROR - Failed to create panorama: Error during image stitching: boolean index did not match indexed array along axis 1; size of axis is 2400 but size of corresponding boolean axis is 1200
+2025-02-17 10:17:51,910 - INFO - Detecting keypoints and computing descriptors...
+2025-02-17 10:17:52,145 - INFO - Detected 2753 keypoints
+2025-02-17 10:17:52,357 - INFO - Detected 3339 keypoints
+2025-02-17 10:17:52,575 - INFO - Detected 3330 keypoints
+2025-02-17 10:17:52,788 - INFO - Detected 3106 keypoints
+2025-02-17 10:17:52,788 - INFO - Matching keypoints between images...
+2025-02-17 10:17:52,846 - INFO - Found 196 good matches between images 0 and 1
+2025-02-17 10:17:52,910 - INFO - Found 266 good matches between images 1 and 2
+2025-02-17 10:17:52,973 - INFO - Found 229 good matches between images 2 and 3
+2025-02-17 10:17:52,973 - INFO - Stitching images...
+2025-02-17 10:17:53,154 - ERROR - Error during image stitching: boolean index did not match indexed array along axis 1; size of axis is 1200 but size of corresponding boolean axis is 2400
+2025-02-17 10:17:53,157 - ERROR - Failed to create panorama: Error during image stitching: boolean index did not match indexed array along axis 1; size of axis is 1200 but size of corresponding boolean axis is 2400
+2025-02-17 10:20:00,596 - INFO - Detecting keypoints and computing descriptors...
+2025-02-17 10:20:00,855 - INFO - Detected 2753 keypoints
+2025-02-17 10:20:01,076 - INFO - Detected 3339 keypoints
+2025-02-17 10:20:01,294 - INFO - Detected 3330 keypoints
+2025-02-17 10:20:01,508 - INFO - Detected 3106 keypoints
+2025-02-17 10:20:01,508 - INFO - Matching keypoints between images...
+2025-02-17 10:20:01,567 - INFO - Found 196 good matches between images 0 and 1
+2025-02-17 10:20:01,632 - INFO - Found 266 good matches between images 1 and 2
+2025-02-17 10:20:01,694 - INFO - Found 229 good matches between images 2 and 3
+2025-02-17 10:20:01,694 - INFO - Stitching images...
+2025-02-17 10:20:01,864 - ERROR - Error during image stitching: boolean index did not match indexed array along axis 1; size of axis is 1200 but size of corresponding boolean axis is 2400
+2025-02-17 10:20:01,867 - ERROR - Stitching failed: Error during image stitching: boolean index did not match indexed array along axis 1; size of axis is 1200 but size of corresponding boolean axis is 2400
