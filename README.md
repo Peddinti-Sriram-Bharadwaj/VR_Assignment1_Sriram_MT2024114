@@ -38,16 +38,16 @@ This script detects and segments coins in a given image. It identifies coins bas
 To run the **coin detection** script, use the following command:
 
 ```bash
-python detect_segment_coins.py <image_name>
+python coins.py <image_name>
 ```
 
 Example:
 
 ```bash
-python detect_segment_coins.py coins_image1
+python coins.py coins1
 ```
 
-Where `coins_image1.jpeg` is the image file located in the `assets` folder. The results will be saved in the `outputs` folder as `coins_detection1.jpeg`, `coins_detection2.jpeg`, etc.
+Where `coins1.jpeg` is the image file located in the `assets` folder. 
 
 ### Results
 
@@ -83,37 +83,30 @@ python stitching.py <image1> <image2> ...
 Example:
 
 ```bash
-python stitching.py image1 image2 image3
+python stitching.py key1 key2 key3
 ```
 
-Where `image1.jpeg`, `image2.jpeg`, etc., are the image files located in the `assets` folder. The resulting panorama will be saved in the `outputs` folder as `panorama1.jpeg`.
-
-### Results
-
-The output will include:
-- **Keypoint Images**: Images with keypoints detected and marked.
-- **Stitched Panorama**: The final stitched panorama image.
-
-### Example Output:
-- **panorama1.jpeg**: The final stitched panorama created from the input images.
+Where `key1`, `key2`, etc., are the image files located in the `assets` folder. The resulting panorama will be saved in the `outputs` folder as `panorama1.jpeg`.
 
 ---
 
 ## Folder Structure
 
 ```
+├── __pycache__
 ├── assets
 │   ├── coins_image1.jpeg
 │   ├── coins_image2.jpeg
 │   └── ...
-├── outputs
-│   ├── coins_detection1.jpeg
-│   ├── coins_detection2.jpeg
-│   ├── panorama1.jpeg
+├── results
+│   ├── coin_detection1.jpeg
+│   ├── coin_detection2.jpeg
+│   └── panoroma1.jpeg
+├── README.md
+├── coins.py
 ├── environment.yml
-├── detect_segment_coins.py
+├── pano_window.py
 ├── stitching.py
-└── README.md
 ```
 
 ## Visual Results
@@ -123,20 +116,20 @@ The output will include:
 The following are the results from coin detection and segmentation:
 
 - **Coins Detection 1**: Detected coins in the first image
-  ![Coins Detection 1](outputs/coins_detection1.jpeg)
+  ![Coins Detection 1](./results/coin_detection1.jpeg)
 
 - **Coins Detection 2**: Detected coins in the second image
-  ![Coins Detection 2](outputs/coins_detection2.jpeg)
+  ![Coins Detection 2](./results/coin_detection2.jpeg)
 
 ### Task 2: Panorama Creation
 
 The following is the final panorama created from the input images:
 
 - **Panorama 1**: The stitched panorama from multiple images
-  ![Panorama 1](outputs/panorama1.jpeg)
+  ![Panorama 1](./results/panoroma1.jpeg)
 
 ---
 
 ## Conclusion
 
-This project demonstrates a basic pipeline for detecting and segmenting coins and stitching images to create a panorama. The methods used include the Hough Circle Transform for coin detection and watershed segmentation for coin segmentation. For panorama creation, ORB keypoints and OpenCV's Stitcher class were used to combine images into a seamless panorama.
+This project demonstrates a basic script for detecting and segmenting coins and stitching images to create a panorama. The methods used include the Hough Circle Transform for coin detection and watershed segmentation for coin segmentation. For panorama creation, ORB keypoints and OpenCV's Stitcher class were used to combine images into a seamless panorama.
