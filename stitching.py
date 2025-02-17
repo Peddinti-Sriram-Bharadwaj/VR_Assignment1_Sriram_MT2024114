@@ -1,68 +1,96 @@
 import cv2
 import sys
+from pano_window import PanoWindow
 
-def detect_and_draw_keypoints(image):
-    # Use ORB (Oriented FAST and Rotated BRIEF) detector
-    orb = cv2.ORB_create()
-    keypoints, descriptors = orb.detectAndCompute(image, None)
+class ImageLoader:
+    """Responsible for loading and resizing images."""
     
-    # Draw the keypoints on the image
-    image_with_keypoints = cv2.drawKeypoints(image, keypoints, None, color=(0, 255, 0), flags=cv2.DrawMatchesFlags_DRAW_RICH_KEYPOINTS)
-    
-    return image_with_keypoints, keypoints
+    def __init__(self, image_paths, resize_factor=0.4):
+        self.image_paths = image_paths
+        self.resize_factor = resize_factor
+        self.images = []
 
-def stitch_images(image_paths):
-    # Load the first image and detect keypoints
-    img1 = cv2.imread(image_paths[0])
-    img1_with_keypoints, keypoints1 = detect_and_draw_keypoints(img1)
-    
-    # Display the first image and its keypoints
-    cv2.imshow("Image 1 with Keypoints", img1_with_keypoints)
-    
-    # Loop through the remaining images and stitch them iteratively
-    for image_path in image_paths[1:]:
-        img2 = cv2.imread(image_path)
-        img2_with_keypoints, keypoints2 = detect_and_draw_keypoints(img2)
+    def load_images(self):
+        """Loads and resizes the images from the provided paths."""
+        for path in self.image_paths:
+            img = cv2.imread(path)
+            if img is None:
+                print(f"Error reading image {path}")
+                continue
+            img_resized = cv2.resize(img, (0, 0), fx=self.resize_factor, fy=self.resize_factor)
+            self.images.append(img_resized)
+
+        if not self.images:
+            print("No valid images were loaded.")
+            sys.exit(1)
         
-        # Display the second image and its keypoints
-        cv2.imshow(f"Image {image_path} with Keypoints", img2_with_keypoints)
-        
-        # Stitch the two images together
+        print(f"Loaded {len(self.images)} images.")
+
+class ImageStitcher:
+    """Responsible for stitching images together into a panorama."""
+    
+    def __init__(self, images):
+        self.images = images
+
+    def stitch_images(self):
+        """Stitches the images using OpenCV's Stitcher."""
         stitcher = cv2.Stitcher_create()
-        status, stitched_image = stitcher.stitch([img1, img2])
+        status, panorama = stitcher.stitch(self.images)
         
-        if status == cv2.Stitcher_OK:
-            img1 = stitched_image  # Update img1 to the stitched result
-        else:
-            print(f"Error stitching {image_path}")
-            break
+        if status != cv2.Stitcher_OK:
+            print("Stitching failed!")
+            return None
+        print("Stitching successful!")
+        return panorama
+
+class PanoramaSaver:
+    """Handles saving the stitched panorama."""
     
-    return img1
+    def __init__(self, panorama, save_path='./assets/panorama.jpeg'):
+        self.panorama = panorama
+        self.save_path = save_path
+
+    def save(self):
+        """Saves the stitched panorama to a file."""
+        cv2.imwrite(self.save_path, self.panorama)
+        print(f"Panorama saved as '{self.save_path}'.")
+
+class StitchingApp:
+    """Main application that coordinates the stitching process."""
+    
+    def __init__(self, image_paths):
+        self.image_paths = image_paths
+
+    def run(self):
+        # Load images
+        loader = ImageLoader(self.image_paths)
+        loader.load_images()
+
+        # Stitch images
+        stitcher = ImageStitcher(loader.images)
+        panorama = stitcher.stitch_images()
+        if panorama is None:
+            return
+
+        # Save panorama
+        saver = PanoramaSaver(panorama)
+        saver.save()
+
+        # Display images
+        pano_window = PanoWindow(loader.images, panorama)
+        pano_window.display_images()
 
 def main():
-    # Get image names from command line arguments
+    # Collect image paths from command line arguments
     if len(sys.argv) < 2:
-        print("Please provide image names as arguments.")
-        return
-    
+        print("Usage: python stitching.py <image1> <image2> ...")
+        sys.exit(1)
+
     image_paths = [f"./assets/{name}.jpeg" for name in sys.argv[1:]]
     
-    # Stitch images and get the panorama
-    panorama = stitch_images(image_paths)
-    
-    # Display the final panorama
-    cv2.imshow("Panorama", panorama)
-    
-    # Save the final panorama image
-    cv2.imwrite('./assets/panorama.jpeg', panorama)
-    print("Panorama saved as './assets/panorama.jpeg'")
-    
-    # Wait until 'x' is pressed to close the windows
-    while True:
-        if cv2.waitKey(1) & 0xFF == ord('x'):
-            break
-    
-    cv2.destroyAllWindows()
+    # Run the application
+    app = StitchingApp(image_paths)
+    app.run()
 
 if __name__ == "__main__":
     main()

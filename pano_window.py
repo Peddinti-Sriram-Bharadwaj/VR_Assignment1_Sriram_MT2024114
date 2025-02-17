@@ -1,36 +1,40 @@
-import cv2
 import matplotlib.pyplot as plt
+import cv2
 
-class ImageWindow:
-    def __init__(self, images, keypoints, panorama):
-        self.images = images
-        self.keypoints = keypoints
+class PanoWindow:
+    def __init__(self, images_with_keypoints, panorama):
+        self.images_with_keypoints = images_with_keypoints
         self.panorama = panorama
-        self.fig, self.axs = plt.subplots(2, 3, figsize=(15, 10))  # 2x3 grid
-        self.display_images()
 
     def display_images(self):
-        for i, img in enumerate(self.images):
-            self.axs[0, i].imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
-            self.axs[0, i].set_title(f"Image {i+1}")
-            self.axs[0, i].axis('off')
+        # Calculate the number of images to display (keypoints + panorama)
+        total_images = len(self.images_with_keypoints) + 1  # Include panorama as well
+        
+        # Create a figure to display images
+        fig, axes = plt.subplots(1, total_images, figsize=(15, 5))
 
-        # Draw keypoints on images
-        for i, (img, kp) in enumerate(zip(self.images, self.keypoints)):
-            img_with_kp = cv2.drawKeypoints(img, kp, None, flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
-            self.axs[1, i].imshow(cv2.cvtColor(img_with_kp, cv2.COLOR_BGR2RGB))
-            self.axs[1, i].set_title(f"Keypoints {i+1}")
-            self.axs[1, i].axis('off')
+        # Ensure axes is always iterable (even when there is only one subplot)
+        if total_images == 1:
+            axes = [axes]
+        
+        # Display the keypoint images
+        for i, img in enumerate(self.images_with_keypoints):
+            axes[i].imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+            axes[i].axis('off')
+        
+        # Display the panorama
+        axes[-1].imshow(cv2.cvtColor(self.panorama, cv2.COLOR_BGR2RGB))
+        axes[-1].axis('off')
 
-        # Display panorama
-        self.axs[1, 2].imshow(cv2.cvtColor(self.panorama, cv2.COLOR_BGR2RGB))
-        self.axs[1, 2].set_title("Panorama")
-        self.axs[1, 2].axis('off')
-
-        self.fig.canvas.mpl_connect('key_press_event', self.on_key)
-        plt.tight_layout()
+        # Add a message to close the window
+        plt.figtext(0.5, 0.01, "Press 'x' to close the window", ha="center", fontsize=12, bbox={"facecolor":"orange", "alpha":0.5, "pad":5})
+        
+        # Define the close event for the window
+        def close_window(event):
+            if event.key == 'x':
+                plt.close()
+        
+        fig.canvas.mpl_connect('key_press_event', close_window)
+        
+        plt.tight_layout(rect=[0, 0.03, 1, 0.95])
         plt.show()
-
-    def on_key(self, event):
-        if event.key == 'x':
-            plt.close(self.fig)
