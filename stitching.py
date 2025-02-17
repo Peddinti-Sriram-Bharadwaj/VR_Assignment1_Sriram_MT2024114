@@ -9,9 +9,12 @@ class ImageLoader:
         self.image_paths = image_paths
         self.resize_factor = resize_factor
         self.images = []
+        self.keypoint_images = []
 
     def load_images(self):
         """Loads and resizes the images from the provided paths."""
+        orb = cv2.ORB_create()
+        
         for path in self.image_paths:
             img = cv2.imread(path)
             if img is None:
@@ -19,6 +22,12 @@ class ImageLoader:
                 continue
             img_resized = cv2.resize(img, (0, 0), fx=self.resize_factor, fy=self.resize_factor)
             self.images.append(img_resized)
+
+            # Detect keypoints
+            gray = cv2.cvtColor(img_resized, cv2.COLOR_BGR2GRAY)
+            keypoints = orb.detect(gray, None)
+            keypoint_img = cv2.drawKeypoints(img_resized, keypoints, None, color=(0, 255, 0))
+            self.keypoint_images.append(keypoint_img)
 
         if not self.images:
             print("No valid images were loaded.")
@@ -76,8 +85,8 @@ class StitchingApp:
         saver = PanoramaSaver(panorama)
         saver.save()
 
-        # Display images
-        pano_window = PanoWindow(loader.images, panorama)
+        # Display keypoint images and final panorama
+        pano_window = PanoWindow(loader.keypoint_images, panorama)
         pano_window.display_images()
 
 def main():
